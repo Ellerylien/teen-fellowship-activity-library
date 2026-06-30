@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>青少年團契活動庫</title>
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --paper: #fffaf1;
+      --ink: #1d1d1f;
+      --muted: #6f675f;
+      --line: rgba(29,29,31,.12);
+      --accent: #ea7a2a;
+      --accent-dark: #b95012;
+      --soft: #fff2df;
+      --green: #315c4d;
+      --shadow: 0 16px 40px rgba(54, 39, 23, .13);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(234,122,42,.20), transparent 32%),
+        radial-gradient(circle at 85% 10%, rgba(49,92,77,.16), transparent 34%),
+        linear-gradient(180deg, #fbf4e9 0%, var(--bg) 52%, #efe5d7 100%);
+      min-height: 100vh;
+    }
+    header {
+      padding: 42px 22px 18px;
+    }
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      background: rgba(255,250,241,.78);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(115deg, rgba(234,122,42,.16), transparent 38%),
+        radial-gradient(circle at 90% 20%, rgba(49,92,77,.14), transparent 26%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      padding: 34px;
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 22px;
+      align-items: end;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 56px);
+      letter-spacing: -0.04em;
+      line-height: 1.04;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+      max-width: 720px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .stat {
+      background: rgba(255,255,255,.56);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .stat b {
+      display: block;
+      font-size: 27px;
+      color: var(--accent-dark);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat span { color: var(--muted); font-size: 13px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 22px 56px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 14px 0 22px;
+      padding: 14px;
+      background: rgba(246,242,234,.86);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(54,39,23,.08);
+    }
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.74);
+      color: var(--ink);
+      border-radius: 16px;
+      padding: 13px 14px;
+      font-size: 15px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: rgba(234,122,42,.65); box-shadow: 0 0 0 4px rgba(234,122,42,.13); }
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto auto;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: center;
+    }
+    button {
+      border: 0;
+      background: var(--ink);
+      color: white;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    button.secondary {
+      background: rgba(29,29,31,.08);
+      color: var(--ink);
+    }
+    button.accent { background: var(--accent); }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 18px;
+    }
+    .chip {
+      padding: 8px 11px;
+      background: rgba(255,255,255,.52);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .chip.active {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(255,250,241,.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(54,39,23,.08);
+      min-height: 270px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -34px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(234,122,42,.12);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index: 1;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      position: relative;
+      z-index: 1;
+    }
+    .pill {
+      font-size: 12px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--accent-dark);
+      border: 1px solid rgba(234,122,42,.18);
+    }
+    .pill.green { background: rgba(49,92,77,.10); color: var(--green); border-color: rgba(49,92,77,.18); }
+    .summary {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .fav {
+      width: 48px;
+      padding: 12px 0;
+      background: rgba(29,29,31,.08);
+      color: var(--ink);
+    }
+    .fav.saved {
+      background: rgba(234,122,42,.18);
+      color: var(--accent-dark);
+    }
+    .empty {
+      background: rgba(255,255,255,.62);
+      border: 1px dashed rgba(29,29,31,.24);
+      border-radius: 22px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      display: none;
+    }
+    dialog {
+      width: min(880px, calc(100vw - 28px));
+      border: 0;
+      border-radius: 26px;
+      background: var(--paper);
+      box-shadow: 0 30px 90px rgba(0,0,0,.32);
+      color: var(--ink);
+      padding: 0;
+    }
+    dialog::backdrop { background: rgba(20,16,12,.48); backdrop-filter: blur(4px); }
+    .modal {
+      padding: 26px;
+    }
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+    .modal h2 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      letter-spacing: -0.03em;
+    }
+    .close {
+      background: rgba(29,29,31,.08);
+      color: var(--ink);
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      padding: 0;
+      font-size: 20px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .box {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.50);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .box h3 {
+      margin: 0 0 9px;
+      font-size: 16px;
+    }
+    .box ul, .box ol {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+    .box p {
+      margin: 0;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+    .full { grid-column: 1 / -1; }
+    .drawer {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .textarea-small { min-height: 100px; resize: vertical; }
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 0 22px 36px;
+      font-size: 13px;
+    }
+    .hidden { display: none !important; }
+    @media (max-width: 880px) {
+      .hero-inner { grid-template-columns: 1fr; padding: 26px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .search-row { grid-template-columns: 1fr; }
+      .detail-grid, .drawer { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      header { padding: 18px 12px 8px; }
+      main { padding: 10px 12px 38px; }
+      .grid { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .hero-inner { padding: 22px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .toolbar { position: static; }
+    }
+    @media print {
+      body { background: white; }
+      .toolbar, .card-actions, footer, .drawer, .close { display: none !important; }
+      .grid { display: block; }
+      .card { break-inside: avoid; box-shadow: none; margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>青少年團契活動庫</h1>
+          <p class="subtitle">把「先玩、再收束、扣回信仰」做成可以快速查找的活動資料庫。適合青少年團契、主日聚會、營會小組與臨時破冰使用。</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="statCount">40</b><span>個活動</span></div>
+          <div class="stat"><b>13</b><span>種分類</span></div>
+          <div class="stat"><b>3–8</b><span>分鐘信仰收束</span></div>
+          <div class="stat"><b>低</b><span>多數成本</span></div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="toolbar" aria-label="搜尋與篩選">
+      <div class="search-row">
+        <input id="search" placeholder="搜尋活動、材料、主題，例如：撕名牌、恩典、經文、跑動">
+        <button class="accent" id="randomBtn">隨機推薦</button>
+      </div>
+      <div class="filters">
+        <select id="category">
+          <option value="">全部分類</option>
+        </select>
+        <select id="energy">
+          <option value="">全部動態程度</option>
+          <option value="低">低</option>
+          <option value="中">中</option>
+          <option value="高">高</option>
+        </select>
+        <select id="difficulty">
+          <option value="">全部難度</option>
+          <option value="低">低</option>
+          <option value="中">中</option>
+          <option value="高">高</option>
+        </select>
+        <button class="secondary" id="favOnly">只看收藏</button>
+        <button class="secondary" id="resetBtn">重設</button>
+      </div>
+    </section>
+
+    <div class="chips" id="quickChips"></div>
+    <div class="empty" id="empty">目前沒有符合條件的活動。可以換個關鍵字，例如「破冰」、「經文」、「恩典」、「跑動」。</div>
+    <section class="grid" id="grid" aria-label="活動清單"></section>
+
+  </main>
+
+  <dialog id="dialog">
+    <div class="modal">
+      <div class="modal-top">
+        <div>
+          <h2 id="modalTitle"></h2>
+          <div class="meta" id="modalMeta"></div>
+        </div>
+        <button class="close" id="closeBtn" aria-label="關閉">×</button>
+      </div>
+      <div class="detail-grid">
+        <div class="box">
+          <h3>需要預備的材料</h3>
+          <ul id="modalMaterials"></ul>
+        </div>
+        <div class="box">
+          <h3>事前預備</h3>
+          <p id="modalPrep"></p>
+        </div>
+        <div class="box full">
+          <h3>玩法流程</h3>
+          <ol id="modalHow"></ol>
+        </div>
+        <div class="box full">
+          <h3>信仰扣回</h3>
+          <p id="modalFaith"></p>
+        </div>
+        <div class="box">
+          <h3>收束問題</h3>
+          <ul id="modalDebrief"></ul>
+        </div>
+        <div class="box">
+          <h3>提醒</h3>
+          <p id="modalNote"></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <footer>
+    青少年團契活動庫 · 單檔 HTML 版 · 版本：2026-06-30｜40 個活動2026-06-30
+  </footer>
+
+  <script>
+    const activities = [{"id": "a01", "title": "信仰狼人殺：誰是假的先知？", "category": "推理與角色", "energy": "中", "duration": "35–50 分鐘", "people": "8–20 人", "difficulty": "中", "cost": "低", "tags": ["推理", "角色扮演", "分辨", "高互動"], "materials": ["角色卡", "投票紙或舉手即可", "計時器", "白板／投影可選"], "prep": "先設定角色：牧羊人、先知、假先知、迷失的羊、見證人、誘惑者。第一次玩建議角色不要太多。", "how": ["每人抽一張角色卡，確認自己的身份。", "主持人帶領夜晚階段：先知查驗、牧羊人保護、假先知混淆。", "白天階段大家輪流說明懷疑對象，限時發言。", "投票選出最可疑的人，被投出者公開身份。", "依人數玩 2–4 輪，最後看真理方或混淆方獲勝。"], "faith": "扣回「分辨真理與謊言」。約翰一書 4:1 提醒我們要試驗，不是所有聽起來屬靈的聲音都出於神。", "debrief": ["剛剛你是靠什麼判斷誰可信？", "生活中有哪些聲音會混淆我們對真理的判斷？"], "note": "避免讓遊戲變成人身攻擊，主持人要提醒：懷疑角色，不攻擊人。"}, {"id": "a02", "title": "如果聖經人物有 IG", "category": "創作與表達", "energy": "中", "duration": "30–45 分鐘", "people": "4–30 人", "difficulty": "低", "cost": "低", "tags": ["創意", "社群", "聖經人物", "搞笑"], "materials": ["紙張或 Canva／手機", "色筆", "人物籤：大衛、約拿、彼得、撒該、摩西、浪子等"], "prep": "準備人物籤與模板欄位：帳號名稱、自介、限動、貼文、留言區、hashtag。", "how": ["每組抽一位聖經人物。", "設計他的 IG 個人頁、限動或貼文。", "內容要包含一個搞笑點與一個故事重點。", "每組上台發表 2 分鐘。", "大家票選：最像本人獎、最好笑獎、最有信仰反思獎。"], "faith": "聖經人物不是完美英雄，他們也逃避、害怕、失敗、衝動，但上帝仍呼召、挽回、使用他們。", "debrief": ["這個人物最真實的人性是什麼？", "上帝如何在他的不完美中工作？"], "note": "很適合不想長時間分享的聚會。"}, {"id": "a03", "title": "聖經版比手畫腳", "category": "破冰與綜藝", "energy": "高", "duration": "20–35 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["肢體", "破冰", "搞笑", "聖經故事"], "materials": ["題目卡", "計時器", "白板記分"], "prep": "準備題目：彼得捕魚、撒該爬樹、摩西分紅海、耶穌平靜風浪、好撒瑪利亞人、浪子回家。", "how": ["分組競賽，每回合派一人抽題。", "表演者不能說話，只能用動作演出。", "隊友在限時內猜答案。", "答對得分，難題可加倍。", "最後選一題做簡短信仰收束。"], "faith": "聖經不是只用聽的，也可以被演出、被看見。選一個故事扣回：例如風浪中，信仰不是沒有風浪，而是耶穌在船上。", "debrief": ["哪個故事最有畫面？", "這個故事今天可能發生在哪種生活情境？"], "note": "第一次帶團契活動，這個最穩。"}, {"id": "a04", "title": "聖經版你畫我猜", "category": "破冰與綜藝", "energy": "中", "duration": "20–35 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["繪畫", "破冰", "抽象詞", "團隊"], "materials": ["白板或大張紙", "筆", "題目卡", "計時器"], "prep": "題目分級：簡單題如方舟、十字架、羊；困難題如恩典、饒恕、悔改、盼望。", "how": ["每組輪流派代表抽題。", "代表只能畫，不能說話或寫字。", "隊友限時猜答案。", "抽象信仰詞可得較高分。", "最後請大家挑一個最難畫的詞，說明為什麼。"], "faith": "有些信仰詞彙很抽象，但真正的信仰需要在生活裡被看見。饒恕、恩典、悔改都不是口號，而是行動。", "debrief": ["哪個詞最難畫？為什麼？", "如果要用行動畫出「恩典」，會是什麼畫面？"], "note": "畫得不好反而更好笑。"}, {"id": "a05", "title": "Running Man 撕名牌：撕掉舊標籤", "category": "動態競賽", "energy": "高", "duration": "30–45 分鐘", "people": "8–30 人", "difficulty": "中", "cost": "低", "tags": ["跑動", "撕名牌", "身份", "福音"], "materials": ["便利貼或名牌貼", "膠帶", "經文卡", "安全場地"], "prep": "準備重擔牌：比較、懼怕、孤單、試探、罪疚感、討人喜歡、手機成癮等。", "how": ["每人背後貼一張重擔牌。", "在安全範圍內進行撕名牌。", "被撕下的人要到恩典區完成復活任務。", "復活任務可為抽經文、說鼓勵話、完成小挑戰。", "最後每人拿一張新的身份卡，如：被愛、蒙恩、神的兒女、可重新開始。"], "faith": "我們身上常被貼標籤，但福音不是靠自己撕掉舊身份，而是在基督裡得著新的身份。", "debrief": ["你覺得青少年最常背著哪種標籤？", "上帝給我們的新身份，跟人的評價有什麼不同？"], "note": "務必設定不能推人、不能拉衣服、不能撞人。"}, {"id": "a06", "title": "聖經人物黑歷史洗白大會", "category": "戲劇與即興", "energy": "中", "duration": "35–50 分鐘", "people": "6–30 人", "difficulty": "中", "cost": "低", "tags": ["戲劇", "危機公關", "恩典", "搞笑"], "materials": ["人物事件卡", "麥克風可選", "記者提問卡"], "prep": "事件卡：彼得三次不認主、約拿逃避上帝、大衛犯罪、摩西發怒、亞伯拉罕說謊、多馬懷疑。", "how": ["每組抽一個人物失敗事件。", "小組準備 8–10 分鐘，設計一場危機公關記者會。", "一人扮演人物，一人扮演經紀人，其他人可扮演記者。", "記者提問，角色現場回應。", "主持人最後整理聖經中真實的恩典與悔改。"], "faith": "聖經沒有把人的失敗修掉，因為福音不是在講完美的人，而是在講恩典如何臨到失敗的人。", "debrief": ["這個人物的失敗讓你意外嗎？", "恩典是替失敗找藉口，還是帶人回到神面前？"], "note": "要避免把罪輕浮化；搞笑後仍要溫柔收束。"}, {"id": "a07", "title": "真假經文判斷", "category": "知識挑戰", "energy": "中", "duration": "20–35 分鐘", "people": "6–50 人", "difficulty": "低", "cost": "低", "tags": ["搶答", "分辨", "聖經知識", "迷思破解"], "materials": ["題目投影片或紙卡", "A/B 牌可選", "計分板"], "prep": "準備真假句子，如：天助自助者、你們要彼此相愛、不要為明天憂慮、只要有信心就一定成功。", "how": ["主持人唸一句話。", "大家用站左右邊、舉牌或搶答方式判斷是否為聖經。", "答對得分，答錯可以請他們猜出錯在哪裡。", "每 3 題揭曉一次正確經文或觀念。", "最後選一題最容易混淆的做信仰收束。"], "faith": "不是所有聽起來很屬靈的話都等於聖經真理。信仰需要分辨，而不是只接受流行金句。", "debrief": ["哪一句最像聖經但其實不是？", "我們平常從哪裡接收很多似是而非的話？"], "note": "適合接在短講前當暖身。"}, {"id": "a08", "title": "聖經版誰是臥底", "category": "推理與角色", "energy": "中", "duration": "25–40 分鐘", "people": "6–20 人", "difficulty": "低", "cost": "低", "tags": ["推理", "詞彙", "神學概念", "低成本"], "materials": ["詞卡", "投票紙可選"], "prep": "準備相近詞組：恩典／獎賞、信心／自信、悔改／後悔、饒恕／忍耐、盼望／樂觀。", "how": ["大多數人拿到同一詞，少數人拿到相近詞。", "每人輪流描述自己的詞，但不能直接說出詞本身。", "大家根據描述投票抓臥底。", "被投出者公開詞卡。", "揭曉後由主持人簡短說明兩個詞的信仰差異。"], "faith": "很多信仰詞彙看起來像，但其實不一樣。恩典不是獎賞，悔改不只是後悔，信心也不等於自信。", "debrief": ["哪一組詞最容易混淆？", "這個差異會怎麼影響我們的信仰生活？"], "note": "很好帶出核心概念，又不會像上課。"}, {"id": "a09", "title": "福音版密室逃脫", "category": "解謎與闖關", "energy": "中", "duration": "45–75 分鐘", "people": "6–25 人", "difficulty": "高", "cost": "中", "tags": ["解謎", "沉浸", "福音", "大型活動"], "materials": ["鎖盒或信封", "密碼紙", "經文線索", "拼圖", "場地佈置"], "prep": "設定故事：被困在象徵迷失的房間，要找出真正的出口。準備 4–5 個謎題關卡。", "how": ["給大家故事背景與任務目標。", "第一關：解開經文密碼。", "第二關：找出假訊息中的真理。", "第三關：拼出十字架或關鍵圖案。", "第四關：從眾多聲音中找出牧人的聲音。", "最後用關鍵字 GRACE、FAITH、JESUS 或 LIGHT 解鎖。"], "faith": "人常以為自由是想做什麼就做什麼，但真正的自由是在基督裡被釋放。", "debrief": ["哪個關卡最像你生活中的困境？", "你覺得真正的出口是什麼？"], "note": "準備時間較長，但最有活動感。"}, {"id": "a10", "title": "團契尋寶：尋找上帝的線索", "category": "解謎與闖關", "energy": "高", "duration": "35–60 分鐘", "people": "6–40 人", "difficulty": "中", "cost": "低", "tags": ["尋寶", "跑動", "合作", "生活物件"], "materials": ["線索卡", "拼圖碎片", "經文卡", "可藏物品的場地"], "prep": "藏好與信仰象徵相關的線索：水、門、光、石頭、餅、羊、鹽、種子。", "how": ["分組出發尋找線索卡。", "每張卡要完成一個小任務或謎題。", "完成後取得拼圖碎片。", "全部碎片拼起來形成一句經文或主題句。", "最快完成或最完整解釋的組別獲勝。"], "faith": "耶穌常用日常物件講天國：光、鹽、種子、羊、門、餅。上帝也常透過生活提醒我們祂是誰。", "debrief": ["你覺得哪個物件最能代表信仰？", "生活中有哪些東西會提醒你想起上帝？"], "note": "室內外都能玩，適合青少年跑動。"}, {"id": "a11", "title": "聖經故事接龍亂演版", "category": "戲劇與即興", "energy": "中", "duration": "25–40 分鐘", "people": "6–25 人", "difficulty": "低", "cost": "低", "tags": ["即興", "搞笑", "故事", "團隊"], "materials": ["聖經故事起始卡", "限制卡", "計時器"], "prep": "準備故事開頭與限制卡：偶像劇語氣、新聞主播語氣、慢動作、超級英雄風、全部定格三秒。", "how": ["主持人給一個聖經故事開頭。", "每人只能接一句，而且要演出來。", "主持人不定時抽限制卡，改變表演方式。", "一輪結束後，大家猜原故事核心。", "再由主持人補上故事中的信仰重點。"], "faith": "聖經人物也會逃避、害怕、誤解上帝，但上帝仍在故事中工作。", "debrief": ["亂演之後，你反而記住了故事哪個部分？", "這個人物最真實的掙扎是什麼？"], "note": "適合活潑小組；害羞者可先安排旁白角色。"}, {"id": "a12", "title": "信仰迷因創作大賽", "category": "創作與表達", "energy": "中", "duration": "30–45 分鐘", "people": "4–30 人", "difficulty": "低", "cost": "低", "tags": ["迷因", "社群", "幽默", "反思"], "materials": ["手機或紙筆", "迷因模板可選", "投票貼紙"], "prep": "準備主題：禱告、試探、聚會遲到、讀經困難、被上帝提醒、教會生活。", "how": ["每組抽一個信仰主題。", "用手機或紙張製作一張迷因。", "迷因要有笑點，也要有一個真實信仰觀察。", "各組展示並說明 30 秒。", "票選最好笑與最有共鳴。"], "faith": "幽默能揭露我們真實的信仰狀態，例如嘴上說交託，心裡卻想控制上帝。", "debrief": ["哪張迷因最像你的信仰日常？", "它反映了什麼需要被上帝更新的地方？"], "note": "請先設定界線：不嘲笑特定人、不冒犯神聖事物。"}, {"id": "a13", "title": "聖經版終極密碼", "category": "破冰與綜藝", "energy": "中", "duration": "15–30 分鐘", "people": "6–35 人", "difficulty": "低", "cost": "低", "tags": ["快節奏", "破冰", "挑戰卡", "經文"], "materials": ["挑戰卡", "計分板可選", "計時器"], "prep": "把密碼設定成經文章節，例如 316、23、516；準備挑戰卡。", "how": ["主持人設定一個數字範圍，如 1–100。", "大家輪流猜數字，主持人縮小範圍。", "猜中的人抽挑戰卡。", "挑戰可以是模仿聖經人物、說一句鼓勵話、10 秒演出故事。", "最後揭曉密碼背後的經文。"], "faith": "可以把遊戲密碼連到今天主題：例如約翰福音 3:16、詩篇 23、馬太福音 5:16。", "debrief": ["今天真正的密碼是什麼？", "這句經文跟我們的生活有什麼關係？"], "note": "很適合當開場暖身。"}, {"id": "a14", "title": "經文炸彈傳傳樂", "category": "破冰與綜藝", "energy": "中", "duration": "15–25 分鐘", "people": "8–40 人", "difficulty": "低", "cost": "低", "tags": ["音樂", "緊張", "鼓勵", "快速"], "materials": ["球或娃娃", "音樂或計時器", "任務卡", "經文卡"], "prep": "準備任務卡：用三個表情演出喜樂、鼓勵右邊的人、模仿聖經人物 5 秒、抽經文送人。", "how": ["大家圍圈傳物品。", "音樂停或計時器響時，拿到的人抽一張任務卡。", "完成任務後繼續傳。", "進行 8–12 回合。", "最後每人抽一張經文卡帶走。"], "faith": "經文不是拿來懲罰人，而是成為彼此鼓勵與提醒的話。", "debrief": ["你今天收到哪一句鼓勵？", "你想把哪句話帶給別人？"], "note": "任務要輕鬆，不要設計讓人羞辱或尷尬的內容。"}, {"id": "a15", "title": "團契版綜藝挑戰賽", "category": "動態競賽", "energy": "高", "duration": "45–70 分鐘", "people": "8–50 人", "difficulty": "中", "cost": "低", "tags": ["綜藝", "接力", "團隊", "恩賜"], "materials": ["紙杯", "乒乓球", "筷子", "吸管", "橡皮筋", "題目卡", "計分板"], "prep": "設計 5 個小關卡：筷子夾球接力、杯子疊高塔、吸管傳橡皮筋、你畫我猜、經文拼圖。", "how": ["分組，每關限時 5 分鐘。", "每關需要不同能力：手巧、反應、默契、記憶、創意。", "每關結束立刻給分。", "最後頒發總冠軍與特色獎。", "收束時請每組說出一位隊友的貢獻。"], "faith": "扣回哥林多前書 12 章：每個肢體都重要。團契不是只需要會講的人，也需要安靜、細心、搞笑、穩定的人。", "debrief": ["你剛剛發現誰的恩賜？", "如果團契是一個身體，你可能是哪個部位？"], "note": "大型聚會很好用，材料便宜。"}, {"id": "a16", "title": "人生拍賣會", "category": "價值選擇", "energy": "中", "duration": "30–45 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["價值觀", "競標", "選擇", "反思"], "materials": ["籌碼或假鈔", "拍賣品卡", "槌子可選"], "prep": "拍賣品：高薪、好人緣、外貌、自由、健康、被理解、信仰堅定、被上帝喜悅、成績、愛情。", "how": ["每人或每組獲得相同籌碼。", "主持人逐項拍賣人生選項。", "大家自由競標，價高者得。", "拍賣結束後看每人買到了什麼。", "主持人引導：你的財寶在哪裡，你的心也在哪裡。"], "faith": "馬太福音 6:21：「你的財寶在哪裡，你的心也在哪裡。」選擇會顯出我們真正重視的東西。", "debrief": ["你花最多籌碼買了什麼？", "你覺得上帝怎麼看我們追求的東西？"], "note": "競標氣氛會很熱烈，但收束要短。"}, {"id": "a17", "title": "上帝創造物拍賣會", "category": "價值選擇", "energy": "中", "duration": "25–40 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["感恩", "拍賣", "創造", "恩典"], "materials": ["籌碼或假鈔", "創造物／人生禮物卡"], "prep": "拍賣品：陽光、朋友、家人、音樂、食物、睡眠、自由、智慧、勇氣、被愛、被饒恕、重新開始。", "how": ["每組得到固定點數。", "主持人陸續拍賣創造物或人生禮物。", "加入手機、人氣、成績、外貌等混淆品。", "結束後請各組展示買到的東西。", "主持人扣回美善恩賜都從神而來。"], "faith": "雅各書 1:17 提醒我們，各樣美善的恩賜都是從上頭來的。很多習以為常的事，其實都是恩典。", "debrief": ["哪一樣東西你平常最容易忽略？", "如果今天要為一件事感謝神，你會選什麼？"], "note": "比人生拍賣會更柔和，適合感恩主題。"}, {"id": "a18", "title": "任務賓果：今晚完成一條線", "category": "互動任務", "energy": "高", "duration": "20–35 分鐘", "people": "8–60 人", "difficulty": "低", "cost": "低", "tags": ["互動", "賓果", "關心", "破冰"], "materials": ["5x5 賓果卡", "筆", "小獎品可選"], "prep": "格子可放：找人擊掌、說聖經人物、幫忙收拾、鼓勵一人、問一人今天如何、寫一句感謝。", "how": ["每人拿一張賓果卡。", "在場地中尋找不同人完成任務。", "每完成一格就請對方簽名。", "先連成一條線的人喊賓果。", "最後給完成最多的人小獎。"], "faith": "信仰不只在聽道，也在彼此相愛、主動關心、服事與感謝中被活出來。", "debrief": ["你今天主動認識了誰？", "哪一格最像彼此相愛的實踐？"], "note": "讓不熟的人快速互動，很適合新朋友多的團契。"}, {"id": "a19", "title": "禱告便利貼攻防戰", "category": "動態競賽", "energy": "高", "duration": "25–40 分鐘", "people": "8–30 人", "difficulty": "低", "cost": "低", "tags": ["跑動", "真理", "謊言", "身份"], "materials": ["便利貼", "膠帶", "真理卡", "安全場地"], "prep": "負面聲音：我不夠好、沒人在乎我、我一定失敗、我不值得被愛、上帝不聽我禱告。", "how": ["每人背上貼 2–3 張負面聲音便利貼。", "在安全範圍內彼此撕下便利貼。", "撕下後到真理區換一張真理貼紙。", "真理貼紙可寫：我是被愛的、神聽見我、我可以重新開始、主與我同在。", "最後大家看自己身上剩下哪些真理。"], "faith": "信仰不是只把壞感覺拿掉，而是用上帝的真理取代謊言。", "debrief": ["哪一個負面聲音最常出現？", "哪一句真理最需要被你記住？"], "note": "內容很貼近青少年，但要注意安全與情緒界線。"}, {"id": "a20", "title": "食物盲測：嚐嚐主恩的滋味", "category": "感官體驗", "energy": "中", "duration": "20–35 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "中", "tags": ["食物", "盲測", "感官", "經歷"], "materials": ["眼罩", "小食物或飲料", "紙杯", "過敏提醒表"], "prep": "準備不同口味糖果、餅乾、果凍或飲料。務必確認過敏與飲食限制。", "how": ["參與者蒙眼試吃或試喝。", "猜味道、品牌或成分。", "可安排正常版與混淆版。", "答對得分，錯了也可給創意答案獎。", "最後揭曉詩篇 34:8 的主題。"], "faith": "詩篇 34:8：「你們要嘗嘗主恩的滋味，便知道他是美善。」信仰不是只聽別人說，也需要親自經歷。", "debrief": ["只聽描述跟親自嚐到有什麼不同？", "你曾經在哪件事上親自經歷神的美善？"], "note": "務必事先詢問過敏；不要用惡整食物。"}, {"id": "a21", "title": "聖經版大富翁：人生選擇遊戲", "category": "桌遊化活動", "energy": "中", "duration": "40–60 分鐘", "people": "4–25 人", "difficulty": "中", "cost": "低", "tags": ["桌遊", "人生", "選擇", "恩典"], "materials": ["自製地圖", "骰子", "棋子", "事件卡", "恩典卡", "試探卡"], "prep": "格子可寫：考試爆掉退 2 格、朋友鼓勵前進 3 格、遇到試探抽卡、禱告抽恩典卡。", "how": ["每組一個棋子，輪流擲骰前進。", "踩到事件格就抽事件卡。", "踩到試探格要做選擇或完成任務。", "踩到恩典格可獲得幫助或復活。", "最先抵達終點或最多恩典卡者獲勝。"], "faith": "人生不是只有靠努力，也會遇到挫折、誘惑、幫助與恩典。箴言 3:5–6 提醒我們專心仰賴耶和華。", "debrief": ["哪個事件最像真實人生？", "你覺得恩典在人生旅途中扮演什麼角色？"], "note": "可做成大型地板版，活動感會更強。"}, {"id": "a22", "title": "信仰闖關 RPG", "category": "解謎與闖關", "energy": "高", "duration": "50–80 分鐘", "people": "10–60 人", "difficulty": "中", "cost": "低", "tags": ["闖關", "RPG", "團隊", "信仰旅程"], "materials": ["關卡牌", "任務道具", "計分表", "經文卡"], "prep": "設計 4–5 關：誘惑關、信任關、合一關、禱告關、使命關。", "how": ["分隊，每隊是一支信仰旅程隊伍。", "每關完成任務取得印章或道具。", "誘惑關：從選項中分辨試探。", "合一關：完成團隊解謎或杯塔挑戰。", "使命關：完成祝福任務或服務任務。", "最後集合，拼出總主題經文。"], "faith": "可扣回希伯來書 12:1：奔那擺在我們前頭的路程。信仰旅程需要分辨、同行、忍耐與使命。", "debrief": ["哪一關最難？", "你的信仰旅程現在最像哪一關？"], "note": "大型聚會或營會很好用。"}, {"id": "a23", "title": "蒙眼引導：誰的聲音值得聽？", "category": "信任與同行", "energy": "中", "duration": "20–35 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["信任", "聲音", "分辨", "體驗"], "materials": ["眼罩", "安全障礙物", "路線標記"], "prep": "用椅子、紙杯、膠帶設計安全路線。安排一位引導者與數位干擾者。", "how": ["兩人一組，一人蒙眼，一人用聲音引導。", "其他人可在安全距離發出干擾聲。", "蒙眼者要走過障礙路線。", "完成後交換角色。", "最後比較：可信聲音與干擾聲有什麼差別。"], "faith": "約翰福音 10:27：「我的羊聽我的聲音。」生活中有許多聲音，信仰需要學習辨認主的聲音。", "debrief": ["你怎麼判斷哪個聲音可信？", "生活中哪些聲音最常干擾你？"], "note": "障礙要安全，不能有尖銳物。"}, {"id": "a24", "title": "背包重量：卸下重擔", "category": "感官體驗", "energy": "低", "duration": "25–40 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["重擔", "壓力", "交託", "體驗"], "materials": ["背包", "書本或重物", "重擔標籤", "十字架或禱告箱"], "prep": "重物貼標籤：成績、比較、家庭期待、人際關係、罪惡感、孤單、手機成癮。", "how": ["讓學生輪流背著重背包走一小段。", "每次加一個重物，感受重量累積。", "主持人唸出每個重擔標籤。", "最後請大家選一張最有感的重擔卡。", "把重擔卡放在十字架前或禱告箱中。"], "faith": "馬太福音 11:28：「凡勞苦擔重擔的人，可以到我這裡來。」耶穌邀請我們把重擔帶到祂面前。", "debrief": ["你最近背著哪一種重量？", "交託不是逃避，可能是什麼？"], "note": "雖然較安靜，但體驗感強；適合壓力主題。"}, {"id": "a25", "title": "盲盒任務：恩賜不是拿來比較", "category": "團隊合作", "energy": "中", "duration": "30–45 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["盲盒", "建造", "恩賜", "合作"], "materials": ["紙杯", "吸管", "膠帶", "報紙", "繩子", "剪刀", "盲盒袋"], "prep": "每組材料包不同，但任務相同：做最高的塔、能承重的橋或最有創意的教會模型。", "how": ["每組抽一包材料，不能交換。", "公布任務與時間限制。", "小組合作完成作品。", "測量高度、承重或創意分。", "最後請各組說出每位隊員的貢獻。"], "faith": "哥林多前書 12 章：肢體雖多，身體卻是一個。每個人材料不同、恩賜不同，但都能被神使用。", "debrief": ["你們這組誰扮演了什麼角色？", "你覺得自己在團契裡可能是什麼樣的肢體？"], "note": "材料差異不要過大，避免某組完全無法完成。"}, {"id": "a26", "title": "聖經版人體拼字：拼出真理關鍵字", "category": "破冰與綜藝", "energy": "高", "duration": "20–35 分鐘", "people": "8–40 人", "difficulty": "低", "cost": "低", "tags": ["肢體", "團隊", "搞笑", "經文"], "materials": ["關鍵字卡", "計時器", "拍照手機可選"], "prep": "準備關鍵字：GRACE、FAITH、LIGHT、LOVE、HOPE、TRUTH，也可用中文：恩典、信心、盼望、光、愛。", "how": ["分組後，每組抽一張關鍵字卡。", "小組成員要用身體排出字母或中文字形。", "限時完成後由主持人或其他組猜答案。", "進階版可要求加入一個定格表情或故事場景。", "最後挑一個關鍵字作信仰收束。"], "faith": "信仰關鍵字不是抽象口號，而是需要一群人一起活出來。教會像一個身體，每個人都參與，真理才被看見。", "debrief": ["哪個字最難排？為什麼？", "如果要把「恩典」活出來，我們小組可以怎麼做？"], "note": "注意肢體距離與界線，不要設計讓人尷尬的姿勢。"}, {"id": "a27", "title": "福音快閃劇：30 秒演出一個真理", "category": "戲劇與即興", "energy": "中", "duration": "25–40 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["短劇", "即興", "創意", "福音"], "materials": ["真理卡", "情境卡", "計時器"], "prep": "準備真理卡：被愛、饒恕、重新開始、交託、同行、盼望；情境卡：考試、人際、家庭、手機、失敗、孤單。", "how": ["每組抽一張真理卡與一張情境卡。", "準備 5–8 分鐘。", "用 30 秒演出這個真理如何進入生活情境。", "其他組猜真理主題。", "主持人用 1 分鐘補上經文或信仰連結。"], "faith": "福音不是只在教會裡被聽見，而是進入考試、人際、家庭、失敗與孤單裡，成為真實的盼望。", "debrief": ["哪一組最貼近真實生活？", "你最希望哪個真理進入你的日常？"], "note": "時間短會降低壓力，也讓活動更有綜藝感。"}, {"id": "a28", "title": "聖經表情包猜猜看", "category": "知識挑戰", "energy": "中", "duration": "20–30 分鐘", "people": "6–50 人", "difficulty": "低", "cost": "低", "tags": ["Emoji", "猜謎", "聖經故事", "快節奏"], "materials": ["表情符號題目投影片或紙卡", "白板記分"], "prep": "用 emoji 做題目，例如：🌊🚶‍♂️=彼得走在水面上；🐟👨‍🦱=約拿；🍞🐟👥=五餅二魚。", "how": ["主持人展示一組 emoji。", "各組搶答聖經故事或人物。", "答對後可加問一題：這故事的核心是什麼？", "難題可給提示：舊約／新約、人物、地點。", "累積分數最高者獲勝。"], "faith": "聖經故事不只是記憶題，每個故事都指向上帝的性情、人的需要，以及上帝如何拯救與帶領。", "debrief": ["哪個故事你最熟？哪個最陌生？", "今天哪個故事讓你重新想起上帝的哪一面？"], "note": "很適合開場暖身，也適合投影操作。"}, {"id": "a29", "title": "逆向尋寶：把祝福藏給別人", "category": "互動任務", "energy": "中", "duration": "25–40 分鐘", "people": "8–40 人", "difficulty": "低", "cost": "低", "tags": ["祝福", "尋寶", "服事", "互動"], "materials": ["祝福卡", "信封", "筆", "貼紙可選"], "prep": "準備空白祝福卡與幾句可參考的經文或鼓勵語。", "how": ["每人或每組寫 2–3 張祝福卡。", "把祝福卡藏在場地安全且容易找到的位置。", "換組出發尋找別人藏的祝福。", "找到後大聲讀出其中一句。", "最後把祝福卡送給需要的人或帶回家。"], "faith": "我們不只是尋找祝福的人，也可以成為上帝祝福別人的管道。信仰會把人從只顧自己，帶向彼此相愛。", "debrief": ["收到祝福跟給出祝福，哪一個更難？", "你今天想把哪一句話送給誰？"], "note": "提醒大家不要寫玩笑式攻擊，祝福要真誠。"}, {"id": "a30", "title": "聽歌找神學：流行歌信仰偵探", "category": "創作與表達", "energy": "低", "duration": "35–50 分鐘", "people": "6–35 人", "difficulty": "中", "cost": "低", "tags": ["音樂", "分辨", "文化", "價值觀"], "materials": ["歌曲片段", "歌詞節錄", "投影或音響", "分析卡"], "prep": "挑選 2–4 首青少年熟悉且適合播放的歌曲，節錄不涉不當內容的歌詞片段。", "how": ["播放歌曲片段或展示歌詞。", "每組找出歌詞中的渴望、恐懼、偶像或盼望。", "用分析卡回答：這首歌認為人最需要什麼？", "各組分享 1 分鐘。", "主持人扣回福音如何回應人的深層渴望。"], "faith": "文化作品常透露人的渴望：被愛、被接納、自由、成功、療癒。福音不是逃離文化，而是幫助我們分辨人真正需要什麼。", "debrief": ["這首歌最打中人的哪個需要？", "福音會如何回應這個需要？"], "note": "歌曲選擇要謹慎；避免播放露骨或不適合教會場景的內容。"}, {"id": "a31", "title": "手機限時任務：拍出信仰關鍵字", "category": "創作與表達", "energy": "中", "duration": "30–45 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["攝影", "手機", "創意", "信仰關鍵字"], "materials": ["手機", "關鍵字卡", "投影可選"], "prep": "準備關鍵字：盼望、光、同行、交託、饒恕、重擔、恩典、回家、等待。", "how": ["每組抽一個信仰關鍵字。", "限時 10–15 分鐘在場地內拍一張照片。", "照片不能直接拍字，而要用畫面表達。", "每組展示照片並用一句話說明。", "主持人補上一段經文或信仰連結。"], "faith": "信仰不只是文字，也能在日常畫面裡被看見。耶穌常用生活中的光、鹽、種子、門與羊來說明天國。", "debrief": ["你們怎麼想到這個畫面？", "生活中哪個畫面會提醒你想起神？"], "note": "提醒不要拍到不想入鏡的人，尊重隱私。"}, {"id": "a32", "title": "十秒聖經新聞台", "category": "戲劇與即興", "energy": "中", "duration": "25–40 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["新聞", "即興", "聖經故事", "搞笑"], "materials": ["聖經事件卡", "麥克風道具可選", "計時器"], "prep": "準備事件卡：紅海分開、耶穌平靜風浪、撒該爬樹、五餅二魚、浪子回家、大衛面對歌利亞。", "how": ["每組抽一個聖經事件。", "準備一段 10–30 秒的新聞快報。", "內容要有主播、現場記者、目擊者或當事人。", "其他組猜事件與故事重點。", "主持人補上這個事件如何顯出上帝的作為。"], "faith": "聖經故事若發生在今天，可能會是震撼新聞。但重點不只是事件奇特，而是上帝在人的恐懼、需要與困境中介入。", "debrief": ["如果你是現場目擊者，你會怎麼形容上帝？", "這個故事讓你看見神的哪一面？"], "note": "可加道具增加綜藝感。"}, {"id": "a33", "title": "紙飛機使命挑戰", "category": "動態競賽", "energy": "中", "duration": "25–40 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["紙飛機", "使命", "祝福", "競賽"], "materials": ["A4 紙", "筆", "目標區標示", "膠帶"], "prep": "在地上設不同距離的目標區，分數越遠越高。準備使命主題：祝福、代禱、邀請、關心。", "how": ["每人寫下一句祝福、代禱或想邀請人的名字。", "把紙摺成紙飛機。", "輪流朝目標區投擲。", "落在哪個區域就完成對應任務，例如本週傳訊息關心一人。", "最後一起為寫下的人簡短禱告。"], "faith": "使命不只是遙遠的大事，也可能是把祝福送到一個人身邊。上帝差遣我們進入日常關係中。", "debrief": ["你想把祝福送給誰？", "關心一個人最小但真實的行動是什麼？"], "note": "不要強迫公開名字，可用代號或只寫在心裡。"}, {"id": "a34", "title": "信仰版一分鐘挑戰", "category": "破冰與綜藝", "energy": "高", "duration": "30–50 分鐘", "people": "8–50 人", "difficulty": "低", "cost": "低", "tags": ["一分鐘", "綜藝", "挑戰", "團隊"], "materials": ["紙杯", "乒乓球", "筷子", "橡皮筋", "便條紙", "計時器"], "prep": "設計多個 60 秒挑戰：疊杯塔、筷子夾球、吹紙杯進圈、橡皮筋射目標、經文拼圖。", "how": ["分組輪流挑戰不同關卡。", "每關限時一分鐘。", "每組可安排最適合的人出戰。", "每關結束記分。", "最後請每組說出：誰在什麼挑戰中幫助了大家。"], "faith": "每個人擅長的事不同。團契不是比較誰最厲害，而是學會看見彼此不同的恩賜，並一起完成使命。", "debrief": ["你今天看見誰的恩賜？", "你平常容易忽略哪種人的貢獻？"], "note": "關卡越簡單越好，節奏才會快。"}, {"id": "a35", "title": "盲抽道具講故事", "category": "戲劇與即興", "energy": "中", "duration": "25–40 分鐘", "people": "6–30 人", "difficulty": "低", "cost": "低", "tags": ["道具", "故事", "即興", "福音"], "materials": ["袋子", "日常小物：鑰匙、橡皮擦、繩子、石頭、杯子、紙巾、手電筒"], "prep": "準備一袋日常小物，每個物品都可連到一個信仰意象。", "how": ["每組盲抽 3 個道具。", "準備一個 1 分鐘故事，必須把 3 個道具都用上。", "故事主題可以是迷失、被找回、重新開始、同行。", "各組演出後，其他人猜信仰主題。", "主持人把道具連到聖經常見意象。"], "faith": "上帝常用日常事物對人說話。鑰匙可談自由，橡皮擦可談饒恕，石頭可談磐石，手電筒可談光。", "debrief": ["哪個道具最容易連到信仰？", "你的生活裡有什麼東西提醒你想起神？"], "note": "道具安全、不尖銳、不易碎。"}, {"id": "a36", "title": "教會版尋找共同點", "category": "互動任務", "energy": "中", "duration": "20–35 分鐘", "people": "8–50 人", "difficulty": "低", "cost": "低", "tags": ["破冰", "認識彼此", "合一", "互動"], "materials": ["任務卡", "筆", "計時器"], "prep": "準備任務卡：找 3 個喜歡同一種食物的人、找同月份生日的人、找都聽過同一首詩歌的人。", "how": ["每人拿一張任務卡。", "限時在場地中找符合條件的人簽名。", "完成指定格數後回到座位。", "主持人請幾人分享最意外的共同點。", "最後扣回教會中的合一與差異。"], "faith": "教會不是因為大家都一樣才在一起，而是因為同在基督裡成為一家人。合一不是消除差異，而是在差異中彼此接納。", "debrief": ["你今天發現誰跟你有意外共同點？", "教會裡的不同，如何成為祝福而不是距離？"], "note": "適合新朋友多或彼此不熟的團契。"}, {"id": "a37", "title": "聖經人物選秀會", "category": "戲劇與即興", "energy": "中", "duration": "35–50 分鐘", "people": "6–35 人", "difficulty": "中", "cost": "低", "tags": ["選秀", "角色", "聖經人物", "搞笑"], "materials": ["人物卡", "評審牌", "才藝題目卡"], "prep": "準備人物卡：大衛、摩西、彼得、保羅、以利亞、約拿、撒該、馬利亞、路得。", "how": ["每組抽一位聖經人物。", "設計他的自我介紹、代表作與招牌台詞。", "上台參加選秀，評審可問問題。", "評分項目：角色還原、創意、信仰重點。", "主持人最後指出每位人物被神使用的方式。"], "faith": "上帝使用的人很不一樣：有人勇敢、有人軟弱、有人逃避、有人悔改。神的呼召不是只臨到完美的人。", "debrief": ["你最像哪一位聖經人物？", "這個人物的弱點如何被神轉化？"], "note": "可以用誇張方式表演，但不要把聖經人物變成惡意嘲諷。"}, {"id": "a38", "title": "禱告接力賽", "category": "動態競賽", "energy": "高", "duration": "25–40 分鐘", "people": "8–40 人", "difficulty": "低", "cost": "低", "tags": ["接力", "禱告", "代禱", "團隊"], "materials": ["接力棒或球", "代禱卡", "分類籃或區域標示"], "prep": "準備代禱卡分類：家庭、學校、人際、教會、世界、自己。每張卡寫一個簡短代禱方向。", "how": ["分組排隊接力。", "每人跑到前方抽一張代禱卡。", "把代禱卡放進正確分類區。", "回來交棒給下一位。", "全部完成後，每組選一張卡，用一句話禱告。"], "faith": "禱告不是只有安靜坐著，也可以是一群人一起承擔、一起把需要帶到神面前。代禱讓我們看見別人的需要。", "debrief": ["哪一類代禱最常被忽略？", "你願意這週為誰持續禱告？"], "note": "最後禱告可以很短，避免把活動感突然變成壓力。"}, {"id": "a39", "title": "價值排序快閃戰", "category": "價值選擇", "energy": "中", "duration": "20–35 分鐘", "people": "6–40 人", "difficulty": "低", "cost": "低", "tags": ["排序", "價值觀", "選擇", "快節奏"], "materials": ["價值卡", "計時器", "桌面或地板空間"], "prep": "準備價值卡：成績、朋友、家人、外貌、自由、信仰、健康、金錢、被喜歡、誠實、勇氣。", "how": ["每組拿同一套價值卡。", "第一輪：30 秒內排出最重要到最不重要。", "第二輪：情境改變，例如考試前、被排擠時、遇到誘惑時，再重排。", "各組比較排序變化。", "主持人扣回不同情境會顯出真正的倚靠。"], "faith": "我們的價值排序常被壓力改變。信仰幫助我們在不同情境中重新對齊上帝看重的事。", "debrief": ["哪張卡的位置變化最大？", "壓力來時，你最容易把什麼放到第一位？"], "note": "不用讓每組長篇分享，選一題快速收束即可。"}, {"id": "a40", "title": "福音廣告公司", "category": "創作與表達", "energy": "中", "duration": "35–55 分鐘", "people": "6–35 人", "difficulty": "中", "cost": "低", "tags": ["廣告", "創意", "福音", "短片"], "materials": ["紙筆", "手機拍攝可選", "主題卡", "計時器"], "prep": "準備主題卡：恩典、饒恕、真正自由、被接納、重新開始、不是靠表現、光照黑暗。", "how": ["每組抽一張福音主題卡。", "假設自己是廣告公司，要用 30 秒廣告傳達這個主題。", "可以選擇現場演出、拍短片或畫分鏡。", "各組發表作品。", "大家票選最清楚、最感人、最有創意。"], "faith": "福音不是抽象標語，而是能被人理解、被生活感受到的好消息。學會表達福音，也是在學習如何向同齡人作見證。", "debrief": ["哪一組最像真的好消息？", "如果要對同學說福音，什麼表達方式比較不尷尬？"], "note": "提醒不是要把福音商業化，而是練習用青少年聽得懂的方式表達。"}];
+    const categories = ["互動任務", "信任與同行", "價值選擇", "創作與表達", "動態競賽", "團隊合作", "感官體驗", "戲劇與即興", "推理與角色", "桌遊化活動", "知識挑戰", "破冰與綜藝", "解謎與闖關"];
+    const quickTags = ["破冰", "跑動", "推理", "創意", "恩典", "經文", "身份", "團隊", "低成本"];
+    const $ = (id) => document.getElementById(id);
+    let state = {
+      q: "",
+      category: "",
+      energy: "",
+      difficulty: "",
+      favOnly: false,
+      quickTag: ""
+    };
+
+    const saved = new Set(JSON.parse(localStorage.getItem("teenFellowshipSaved") || "[]"));
+
+    function saveFavorites() {
+      localStorage.setItem("teenFellowshipSaved", JSON.stringify([...saved]));
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[s]));
+    }
+
+    function pill(text, cls = "") {
+      return `<span class="pill ${cls}">${escapeHtml(text)}</span>`;
+    }
+
+    function summarize(a) {
+      return `${a.duration}｜${a.people}｜材料：${a.materials.slice(0, 3).join("、")}${a.materials.length > 3 ? "…" : ""}`;
+    }
+
+    function matches(a) {
+      const q = state.q.trim().toLowerCase();
+      const hay = [
+        a.title, a.category, a.energy, a.duration, a.people, a.difficulty, a.cost,
+        ...(a.tags || []), ...(a.materials || []), a.prep, ...(a.how || []),
+        a.faith, ...(a.debrief || []), a.note
+      ].join(" ").toLowerCase();
+
+      if (q && !hay.includes(q)) return false;
+      if (state.category && a.category !== state.category) return false;
+      if (state.energy && a.energy !== state.energy) return false;
+      if (state.difficulty && a.difficulty !== state.difficulty) return false;
+      if (state.favOnly && !saved.has(a.id)) return false;
+      if (state.quickTag && !hay.includes(state.quickTag.toLowerCase())) return false;
+      return true;
+    }
+
+    function renderCategories() {
+      const select = $("category");
+      categories.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c;
+        option.textContent = c;
+        select.appendChild(option);
+      });
+    }
+
+    function renderChips() {
+      const wrap = $("quickChips");
+      wrap.innerHTML = quickTags.map(t => `<button class="chip ${state.quickTag === t ? "active" : ""}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join("");
+      wrap.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.quickTag = state.quickTag === btn.dataset.tag ? "" : btn.dataset.tag;
+          render();
+        });
+      });
+    }
+
+    function render() {
+      const list = activities.filter(matches);
+      $("grid").innerHTML = list.map(a => `
+        <article class="card">
+          <h2>${escapeHtml(a.title)}</h2>
+          <div class="meta">
+            ${pill(a.category, "green")}
+            ${pill("動態 " + a.energy)}
+            ${pill("難度 " + a.difficulty)}
+            ${pill(a.cost + "成本")}
+          </div>
+          <p class="summary">${escapeHtml(summarize(a))}</p>
+          <div class="meta">
+            ${a.tags.slice(0, 3).map(t => pill("#" + t, "green")).join("")}
+          </div>
+          <div class="card-actions">
+            <button onclick="openActivity('${a.id}')">看玩法與材料</button>
+            <button class="fav ${saved.has(a.id) ? "saved" : ""}" onclick="toggleFav('${a.id}')" title="收藏">★</button>
+          </div>
+        </article>
+      `).join("");
+      $("empty").style.display = list.length ? "none" : "block";
+      $("statCount").textContent = list.length === activities.length ? activities.length : `${list.length}/${activities.length}`;
+      $("favOnly").classList.toggle("accent", state.favOnly);
+      renderChips();
+    }
+
+    window.toggleFav = function(id) {
+      if (saved.has(id)) saved.delete(id);
+      else saved.add(id);
+      saveFavorites();
+      render();
+    }
+
+    window.openActivity = function(id) {
+      const a = activities.find(x => x.id === id);
+      if (!a) return;
+      $("modalTitle").textContent = a.title;
+      $("modalMeta").innerHTML = [
+        pill(a.category, "green"),
+        pill(a.duration),
+        pill(a.people),
+        pill("動態 " + a.energy),
+        pill("難度 " + a.difficulty),
+        pill(a.cost + "成本")
+      ].join("");
+      $("modalMaterials").innerHTML = a.materials.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+      $("modalPrep").textContent = a.prep;
+      $("modalHow").innerHTML = a.how.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+      $("modalFaith").textContent = a.faith;
+      $("modalDebrief").innerHTML = a.debrief.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+      $("modalNote").textContent = a.note;
+      $("dialog").showModal();
+    }
+
+    $("search").addEventListener("input", e => { state.q = e.target.value; render(); });
+    $("category").addEventListener("change", e => { state.category = e.target.value; render(); });
+    $("energy").addEventListener("change", e => { state.energy = e.target.value; render(); });
+    $("difficulty").addEventListener("change", e => { state.difficulty = e.target.value; render(); });
+    $("favOnly").addEventListener("click", () => { state.favOnly = !state.favOnly; render(); });
+    $("resetBtn").addEventListener("click", () => {
+      state = { q: "", category: "", energy: "", difficulty: "", favOnly: false, quickTag: "" };
+      $("search").value = "";
+      $("category").value = "";
+      $("energy").value = "";
+      $("difficulty").value = "";
+      render();
+    });
+    $("randomBtn").addEventListener("click", () => {
+      const list = activities.filter(matches);
+      const source = list.length ? list : activities;
+      const pick = source[Math.floor(Math.random() * source.length)];
+      openActivity(pick.id);
+    });
+    $("closeBtn").addEventListener("click", () => $("dialog").close());
+    $("dialog").addEventListener("click", (e) => {
+      const rect = $("dialog").getBoundingClientRect();
+      const inDialog = rect.top <= e.clientY && e.clientY <= rect.top + rect.height && rect.left <= e.clientX && e.clientX <= rect.left + rect.width;
+      if (!inDialog) $("dialog").close();
+    });
+
+
+    renderCategories();
+    render();
+  </script>
+</body>
+</html>
